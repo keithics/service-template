@@ -7,9 +7,8 @@ ENV GITHUB_TOKEN $GITHUB_TOKEN
 
 FROM base as build
 ARG GITHUB_TOKEN
-RUN printenv
 RUN echo //npm.pkg.github.com/:_authToken=$GITHUB_TOKEN >> .npmrc
-RUN echo @signalyticsai:registry=https://npm.pkg.github.com/ >> .npmrc
+RUN echo @keithics:registry=https://npm.pkg.github.com/ >> .npmrc
 
 RUN npm ci
 COPY . .
@@ -17,9 +16,8 @@ RUN  npm run build
 
 FROM base as release
 ARG GITHUB_TOKEN
-RUN printenv
 RUN echo //npm.pkg.github.com/:_authToken=$GITHUB_TOKEN >> .npmrc
-RUN echo @signalyticsai:registry=https://npm.pkg.github.com/ >> .npmrc
+RUN echo @keithics:registry=https://npm.pkg.github.com/ >> .npmrc
 RUN npm install --production
 COPY --from=build /usr/src/app/dist /usr/src/app/dist
 

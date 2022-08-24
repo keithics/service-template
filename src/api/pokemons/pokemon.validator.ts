@@ -1,4 +1,4 @@
-import Joi from '@signalyticsai/joi/lib/objectId';
+import Joi from '@keithics/joi/lib/objectId';
 
 const statesFields = {
   name: Joi.string().required(),

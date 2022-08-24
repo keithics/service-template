@@ -1,4 +1,4 @@
-import CoreCrudController from '@signalyticsai/core/lib/core-crud.controller';
+import CoreCrudController from '@keithics/core/lib/core-crud.controller';
 import { Model } from 'mongoose';
 import Pokemon, { PokemonInterface } from './pokemon.model';
 

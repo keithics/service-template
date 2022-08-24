@@ -77,6 +77,7 @@ exports[`Pokemon Tests CRUD routes SEARCHING  - Should respond with status code 
 
 exports[`Pokemon Tests CRUD routes UPDATE ONE  - Should respond with status code 200 1`] = `
 Object {
+  "__v": 0,
   "_id": "000000000000000000000000",
   "createdAt": "1984-01-24T16:00:00.000Z",
   "name": "mimikyu",

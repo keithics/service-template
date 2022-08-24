@@ -1,7 +1,7 @@
 import request from 'supertest';
 import { mongo } from 'server/mongo';
 import app from 'server/app';
-import createFakeUser from '@signalyticsai/core/lib/jest.fake-user';
+import createFakeUser from '@keithics/core/lib/jest.fake-user';
 import jsonUpdate from './json/pokemon-update.json';
 import json from './json/pokemon.json';
 

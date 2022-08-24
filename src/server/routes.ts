@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import config from './config';
 import pokemonRouter from 'api/pokemons/pokemon.routes';
-import { authenticate } from '@signalyticsai/auth/lib/authenticate';
+import { authenticate } from '@keithics/auth/lib/authenticate';
 
 const routes = Router();
 

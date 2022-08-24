@@ -13,10 +13,10 @@
     "prepare": "node -e \"try { require('husky').install() } catch (e) {if (e.code !== 'MODULE_NOT_FOUND') throw e}\""
   },
   "dependencies": {
-    "@signalyticsai/auth": "^4.1.2",
-    "@signalyticsai/core": "^4.0.4",
-    "@signalyticsai/errors": "^3.0.14",
-    "@signalyticsai/joi": "^2.0.9",
+    "@keithics/auth": "^6.3.1",
+    "@keithics/core": "^6.3.1",
+    "@keithics/errors": "^6.3.1",
+    "@keithics/joi": "^6.3.5",
     "chalk": "^4.1.2",
     "cors": "^2.8.5",
     "dotenv": "^16.0.1",
