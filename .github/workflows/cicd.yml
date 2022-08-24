@@ -1,0 +1,124 @@
+name: CICD
+
+# 1
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push events but only for the master branch
+  push:
+    branches:
+      - master
+      - staging
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Image version'
+        required: true
+#2
+env:
+  IMAGE_NAME: "service-template"
+  GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
+
+#3
+jobs:
+  linting:
+    name: "Linting"
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Checkout Code"
+        uses: "actions/checkout@v2"
+
+      - name: "Lint code"
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
+        run: |
+          npm ci
+          npm run lint
+  testing:
+    name: "Automated Tests"
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Checkout Code"
+        uses: "actions/checkout@v2"
+
+      - name: "Run unit tests"
+        env:
+          MONGO_URL_TEST: ${{ secrets.MONGO_URL_TEST }}
+        run: |
+          npm ci
+          npm run test
+  cd:
+    needs:
+      - linting
+      - testing
+    name: "Deployment"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v2
+
+      - name: Checking Branch
+        id: branch_check
+        run: |
+          echo "Running on branch ${{ github.ref }}"
+          if [ "${{ github.ref }}" = "refs/heads/master" ]; then
+            echo "::set-output name=registry::${{ secrets.DO_REGISTRY}}"
+            echo "::set-output name=do_token::${{ secrets.DIGITALOCEAN_ACCESS_TOKEN}}"
+            echo "::set-output name=app_id::${{ secrets.DO_APP_ID}}"
+          elif [ "${{ github.ref }}" = "refs/heads/staging" ]; then
+            echo "::set-output name=registry::${{ secrets.DO_REGISTRY_STAGING}}"
+            echo "::set-output name=do_token::${{ secrets.DIGITALOCEAN_ACCESS_TOKEN_STAGING}}"
+            echo "::set-output name=app_id::${{ secrets.DO_APP_ID_STAGING}}"
+          else
+             echo "::set-output name=registry::others"
+             echo "::set-output name=do_token::others"
+             echo "::set-output name=app_id::others"
+          fi         
+
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ steps.branch_check.outputs.do_token }}
+
+      - name: Log in to DigitalOcean Container Registry with short-lived credentials
+        run: doctl registry login --expiry-seconds 600
+
+      - name: Get the latest repo tag
+        id: latest-tag
+        shell: bash
+        run: |
+          doctl registry repository list-tags ${{env.IMAGE_NAME}} > repo.yml
+          TAG=$(awk 'NR==2{print $1}' repo.yml)
+          echo "::set-output name=tag::$TAG"
+          echo "Latest tag is: $TAG"
+
+      - name: Generate GITHUB_SHA
+        id: github-sha
+        shell: bash
+        run: |
+          SHORT_SHA=$(echo $GITHUB_SHA | cut -c1-7)
+          echo "::set-output name=sha::$SHORT_SHA"
+          echo "New tag is: $SHORT_SHA"
+
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.branch_check.outputs.registry }}/${{env.IMAGE_NAME}}:${{steps.github-sha.outputs.sha}}
+          build-args: |
+            GITHUB_TOKEN=${{ secrets.TOKEN_GITHUB }}
+
+      #      - name: Remove all old images
+      #        run: if [ ! -z "$(doctl registry repository list | grep "$(echo $IMAGE_NAME)")" ]; then doctl registry repository delete-manifest $(echo $IMAGE_NAME) $(doctl registry repository list-tags $(echo $IMAGE_NAME) | grep -o "sha.*") --force; else echo "No repository"; fi
+
+
+      - name: DigitalOcean App Platform deployment
+        run: |
+          echo "Downloading app.yml"
+          doctl app spec get ${{steps.branch_check.outputs.app_id}}  > app.yml
+          echo "Updating component tag in app.yml"
+          sed 's/${{steps.latest-tag.outputs.tag}}/${{steps.github-sha.outputs.sha}}/' app.yml > new.yml
+          echo "Uploading app spec"
+          doctl apps update ${{steps.branch_check.outputs.app_id}} --spec new.yml

@@ -1,0 +1,44 @@
+name: CI
+
+# 1
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push events but only for the master branch
+  push:
+    branches-ignore:
+      - master
+      - staging
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Image version'
+        required: true
+#2
+env:
+  REGISTRY: ${{ secrets.DO_REGISTRY}}
+  IMAGE_NAME: "service-template"
+  GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
+  APP_ID : ${{secrets.DO_APP_ID}}
+#3
+jobs:
+  ci:
+    name: "Integration"
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Checkout Code"
+        uses: "actions/checkout@v2"
+
+      - name: "Lint code"
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
+        run: |
+          npm ci
+          npm run lint
+      - name: "Run unit tests"
+        env:
+          MONGO_URL_TEST: ${{ secrets.MONGO_URL_TEST }}
+        run: npm run test
+
+

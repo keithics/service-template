@@ -1,0 +1,87 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Pokemon Tests CRUD routes CREATE - Should respond with status code 200 1`] = `
+Object {
+  "__v": 0,
+  "_id": "000000000000000000000000",
+  "createdAt": "1984-01-24T16:00:00.000Z",
+  "name": "Pikachu",
+  "type": "electric",
+  "updatedAt": "1984-01-24T16:00:00.000Z",
+  "user": "000000000000000000000000",
+}
+`;
+
+exports[`Pokemon Tests CRUD routes FILTERING  - Should respond with status code 200 1`] = `
+Object {
+  "docs": Array [
+    Object {
+      "__v": 0,
+      "_id": "000000000000000000000000",
+      "createdAt": "1984-01-24T16:00:00.000Z",
+      "name": "Pikachu",
+      "type": "electric",
+      "updatedAt": "1984-01-24T16:00:00.000Z",
+      "user": "000000000000000000000000",
+    },
+  ],
+  "hasNextPage": false,
+  "hasPrevPage": false,
+  "limit": 15,
+  "nextPage": null,
+  "page": 1,
+  "pagingCounter": 1,
+  "prevPage": null,
+  "totalDocs": 1,
+  "totalPages": 1,
+}
+`;
+
+exports[`Pokemon Tests CRUD routes PAGINATION - Should respond with status code 401 1`] = `
+Object {
+  "docs": Array [
+    Object {
+      "__v": 0,
+      "_id": "000000000000000000000000",
+      "createdAt": "1984-01-24T16:00:00.000Z",
+      "name": "Pikachu",
+      "type": "electric",
+      "updatedAt": "1984-01-24T16:00:00.000Z",
+      "user": "000000000000000000000000",
+    },
+  ],
+  "hasNextPage": false,
+  "hasPrevPage": false,
+  "limit": 15,
+  "nextPage": null,
+  "page": 1,
+  "pagingCounter": 1,
+  "prevPage": null,
+  "totalDocs": 1,
+  "totalPages": 1,
+}
+`;
+
+exports[`Pokemon Tests CRUD routes READ ONE  - Should respond with status code 200 1`] = `
+Object {
+  "_id": "000000000000000000000000",
+  "createdAt": "1984-01-24T16:00:00.000Z",
+  "name": "Pikachu",
+  "type": "electric",
+  "updatedAt": "1984-01-24T16:00:00.000Z",
+  "user": "000000000000000000000000",
+}
+`;
+
+exports[`Pokemon Tests CRUD routes SEARCHING  - Should respond with status code 200 1`] = `Array []`;
+
+exports[`Pokemon Tests CRUD routes UPDATE ONE  - Should respond with status code 200 1`] = `
+Object {
+  "_id": "000000000000000000000000",
+  "createdAt": "1984-01-24T16:00:00.000Z",
+  "name": "mimikyu",
+  "type": "dark",
+  "updatedAt": "1984-01-24T16:00:00.000Z",
+  "user": "000000000000000000000000",
+}
+`;
